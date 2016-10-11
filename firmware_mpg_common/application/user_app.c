@@ -88,17 +88,25 @@ Promises:
 */
 void UserAppInitialize(void)
 {
+  LedOff(CYAN);
+  LedOff(GREEN);
+  LedOff(YELLOW);
+  LedOff(ORANGE);
+  LedOff(PURPLE);
+  LedOff(BLUE);
+  LedOff(RED);
+  LedOff(WHITE);
   
   /* If good initialization, set state to Idle */
-  if( 1 )
-  {
-    UserApp_StateMachine = UserAppSM_Idle;
-  }
-  else
-  {
-    /* The task isn't properly initialized, so shut it down and don't run */
-    UserApp_StateMachine = UserAppSM_FailedInit;
-  }
+  // if( 1 )
+  //{
+  //  UserApp_StateMachine = UserAppSM_Idle;
+  //}
+  //else
+  //{
+  //  /* The task isn't properly initialized, so shut it down and don't run */
+  //  UserApp_StateMachine = UserAppSM_FailedInit;
+  //}
 
 } /* end UserAppInitialize() */
 
@@ -119,8 +127,25 @@ Promises:
 */
 void UserAppRunActiveState(void)
 {
-  UserApp_StateMachine();
-
+  static u16 cycle_counter = 0;
+  static LedNumberType current_led = WHITE;
+  static LedRateType pwm_array[9] = {0,0,0,0,0,0,0,0,0};
+  
+  cycle_counter++;
+  if (cycle_counter == LED_SPEED_MS)
+  {
+      cycle_counter = 0;
+      pwm_array[current_led] = LED_PWM_100;
+      current_led = (current_led + 1) % (LAST_LED + 1);
+  }
+  if (cycle_counter % LED_PWM_CYCLE == 0)
+  {
+    for (LedNumberType i = WHITE; i <= LAST_LED; i++) {
+        LedPWM(i, pwm_array[i]);
+        pwm_array[i] = pwm_array[i] - 2;
+      }
+  }
+  //UserApp_StateMachine();
 } /* end UserAppRunActiveState */
 
 
