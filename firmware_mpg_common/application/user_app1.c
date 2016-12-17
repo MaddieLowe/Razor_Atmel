@@ -88,6 +88,10 @@ Promises:
 */
 void UserApp1Initialize(void)
 {
+  LCDWriteCustomChar(LINE2_START_ADDR, LCD_SMILEY);
+  LCDWriteCustomChar(LINE2_START_ADDR + 1, LCD_HEART);
+  LCDWriteCustomChar(LINE2_START_ADDR + 2, LCD_DIAMOND);
+
   /* If good initialization, set state to Idle */
   if( 1 )
   {

@@ -94,6 +94,11 @@ space can be used for scrolling displays.
 #define   LINE1_END_ABSOLUTE  (u8)0x27    /* Constant for last character RAM address in LINE1 */
 #define   LINE2_END_ABSOLUTE  (u8)0x67    /* Constant for last character RAM address in LINE2 */
 
+#define   LCD_SET_CGRAM_ADDR  (u8)0x40    /* Base address for setting the CGRAM address */
+#define   LCD_SMILEY          (u8)0x00    /* The CGRAM address where we want to put the smiley character */
+#define   LCD_HEART           (u8)0x01    /* The CGRAM address where we want to put the heart character */
+#define   LCD_DIAMOND         (u8)0x02    /* The CGRAM address where we want to put the diamond character */
+
 /**********************************************************************************************************************
 * Function Declarations
 **********************************************************************************************************************/
@@ -104,11 +109,13 @@ space can be used for scrolling displays.
 void LCDCommand(u8 u8Command_);
 void LCDClearChars(u8 u8Address_, u8 u8CharactersToClear_);
 void LCDMessage(u8 u8Address_, u8 *u8Message_);
+void LCDWriteCustomChar(u8 u8Address_, u8 u8CharAddress_);
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Protected functions */
 /*--------------------------------------------------------------------------------------------------------------------*/
+void LcdSetupCustomChars(void);
 void LcdInitialize(void);
 void LcdRunActiveState(void);
 

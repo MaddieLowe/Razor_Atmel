@@ -75,6 +75,13 @@ static fnCode_type Lcd_StateMachine;
 
 static u32 Lcd_u32Timer;
 
+static u8 u8BitmapRows = 8;       /* Each character is a 5x8 bitmap */
+static u8 au8SmileyBitmap[] = {0x1B, 0x00, 0x0A, 0x0A, 0x00, 0x04, 0x11, 0x0E};
+static u8 au8HeartBitmap[] = {0x00, 0x00, 0x0A, 0x15, 0x0A, 0x04, 0x00, 0x00};
+static u8 au8DiamondBitmap[] = {0x00, 0x04, 0x0A, 0x11, 0x0A, 0x04, 0x00, 0x00};
+static u8 u8NumCustomChars = 3;
+static u8* aau8CustomChars[] = {au8SmileyBitmap, au8HeartBitmap, au8DiamondBitmap};
+static u8 au8CustomCharAddresses[] = {LCD_SMILEY, LCD_HEART, LCD_DIAMOND};
 
 /***********************************************************************************************************************
 * Function Definitions
@@ -193,10 +200,61 @@ void LCDClearChars(u8 u8Address_, u8 u8CharactersToClear_)
       	
 } /* end LCDClearChars() */
 
+/*------------------------------------------------------------------------------
+Function: LCDWriteCustomChar
+
+Description:
+Writes a custom character onto the screen.
+
+Requires:
+  - LCD is initialized
+  - Custom character has been loaded into CGRAM on the LCD
+  - u8Address_ is the address where the character will be written
+  - u8CharAddress_ is DDRAM address of the character to be displayed
+
+Promises:
+  - Displays the custom character at the specified address
+*/
+void LCDWriteCustomChar(u8 u8Address_, u8 u8CharAddress_)
+{
+  /* Set cursor to address */
+  LCDCommand(LCD_ADDRESS_CMD | u8Address_);
+  TWI0WriteByte(LCD_ADDRESS, LCD_CONTROL_DATA, NO_STOP);
+  TWI0WriteByte(LCD_ADDRESS, u8CharAddress, STOP);
+}
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Protected Functions */
 /*--------------------------------------------------------------------------------------------------------------------*/
+
+/*------------------------------------------------------------------------------
+Function: LcdSetupCustomChars
+
+Description:
+Sets custom bitmaps into CGRAM on the LCD. Meant to be called during
+initialization.
+
+Requires:
+ -
+
+Promises:
+ - Custom characters defined in LCD_CUSTOM_CHARS will be loaded into CGRAM
+*/
+void LcdSetupCustomChars(void) {
+  for (u8 i = 0; i < u8NumCustomChars; i++) {
+    LCDCommand(LCD_FUNCTION_CMD);
+    /* Set CGRAM address to initial address of 0x00 */
+    LCDCommand(LCD_SET_CGRAM_ADDR | (au8CustomCharAddresses[i]*u8BitmapRows) );
+    /* Tell LCD we are going to send data rather than a command */
+    TWI0WriteByte(LCD_ADDRESS, LCD_CONTROL_DATA, NO_STOP);
+    /* Now send the actual bitmap data, which will be written to the address
+       that we previously set the CGRAM to */
+    u8* au8BitmapToSend = aau8CustomChars[i];
+    TWI0WriteData(LCD_ADDRESS, u8BitmapRows, &au8BitmapToSend[0], STOP);
+  }
+  /* Clear the display and set the DDRAM address to 0x00 */
+  LCDCommand(LCD_CLEAR_CMD);
+}
 
 /*------------------------------------------------------------------------------
 Function: LcdInitialize
@@ -240,6 +298,8 @@ void LcdInitialize(void)
   
   /* Send Final Command to turn it on */
   TWI0WriteByte(LCD_ADDRESS, LCD_DISPLAY_CMD | LCD_DISPLAY_ON, STOP);
+
+  LcdSetupCustomChars();
 
   /* Blacklight - White */
   LedOn(LCD_RED);
