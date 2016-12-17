@@ -220,7 +220,7 @@ void LCDWriteCustomChar(u8 u8Address_, u8 u8CharAddress_)
   /* Set cursor to address */
   LCDCommand(LCD_ADDRESS_CMD | u8Address_);
   TWI0WriteByte(LCD_ADDRESS, LCD_CONTROL_DATA, NO_STOP);
-  TWI0WriteByte(LCD_ADDRESS, u8CharAddress, STOP);
+  TWI0WriteByte(LCD_ADDRESS, u8CharAddress_, STOP);
 }
 
 /*--------------------------------------------------------------------------------------------------------------------*/
