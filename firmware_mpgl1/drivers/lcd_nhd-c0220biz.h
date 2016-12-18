@@ -95,9 +95,19 @@ space can be used for scrolling displays.
 #define   LINE2_END_ABSOLUTE  (u8)0x67    /* Constant for last character RAM address in LINE2 */
 
 #define   LCD_SET_CGRAM_ADDR  (u8)0x40    /* Base address for setting the CGRAM address */
-#define   LCD_SMILEY          (u8)0x00    /* The CGRAM address where we want to put the smiley character */
-#define   LCD_HEART           (u8)0x01    /* The CGRAM address where we want to put the heart character */
-#define   LCD_DIAMOND         (u8)0x02    /* The CGRAM address where we want to put the diamond character */
+#define   LCD_BITMAP_ROWS     (u8)8
+
+/* To add a new custom character, add a name for it in this enum
+   and add the DDRAM address and bitmap info to the LCDCustomChars
+   array in the source file.
+*/
+typedef enum {SMILEY = 0, HEART, DIAMOND} LCDCharType;
+
+typedef struct
+{
+  u8 u8DDRAMAddress;
+  u8 au8Bitmap[8];
+}LCDCustomCharType;
 
 /**********************************************************************************************************************
 * Function Declarations
@@ -109,7 +119,7 @@ space can be used for scrolling displays.
 void LCDCommand(u8 u8Command_);
 void LCDClearChars(u8 u8Address_, u8 u8CharactersToClear_);
 void LCDMessage(u8 u8Address_, u8 *u8Message_);
-void LCDWriteCustomChar(u8 u8Address_, u8 u8CharAddress_);
+void LCDWriteCustomChar(u8 u8Address_, LCDCharType LCDChar_);
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/

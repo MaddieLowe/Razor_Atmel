@@ -52,14 +52,12 @@ extern volatile u32 G_u32ApplicationFlags;             /* From main.c */
 extern volatile u32 G_u32SystemTime1ms;                /* From board-specific source file */
 extern volatile u32 G_u32SystemTime1s;                 /* From board-specific source file */
 
-
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
 Variable names shall start with "UserApp_" and be declared as static.
 ***********************************************************************************************************************/
 static fnCode_type UserApp1_StateMachine;            /* The state machine function pointer */
 //static u32 UserApp1_u32Timeout;                      /* Timeout counter used across states */
-
 
 /**********************************************************************************************************************
 Function Definitions
@@ -88,9 +86,9 @@ Promises:
 */
 void UserApp1Initialize(void)
 {
-  LCDWriteCustomChar(LINE2_START_ADDR, LCD_SMILEY);
-  LCDWriteCustomChar(LINE2_START_ADDR + 1, LCD_HEART);
-  LCDWriteCustomChar(LINE2_START_ADDR + 2, LCD_DIAMOND);
+  LCDWriteCustomChar(LINE2_START_ADDR, SMILEY);
+  LCDWriteCustomChar(LINE2_START_ADDR + 1, HEART);
+  LCDWriteCustomChar(LINE2_START_ADDR + 2, DIAMOND);
 
   /* If good initialization, set state to Idle */
   if( 1 )
