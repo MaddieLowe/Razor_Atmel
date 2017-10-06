@@ -136,7 +136,35 @@ State Machine Function Definitions
 /* Wait for ??? */
 static void UserApp1SM_Idle(void)
 {
+  static u32 u32CounterMiliseconds = 0;
+  static u32 u32BlinkInterval = COUNTER_START_MS;
+  static bool bblinkIncreasing = TRUE;
+  static bool blightIsOn = FALSE;
+  
+  if (G_u32SystemTime1ms % 2000 == 0 && bblinkIncreasing)
+  {
+    u32BlinkInterval = u32BlinkInterval/2;
+    u32CounterMiliseconds = 0;
+  }
+  
+  if (u32BlinkInterval < 10)
+  {
+    bblinkIncreasing = FALSE;
+    u32BlinkInterval = COUNTER_START_MS;
+  }
 
+  if (u32CounterMiliseconds == u32BlinkInterval) {
+    if (blightIsOn) {
+      HEARTBEAT_OFF();
+      blightIsOn = FALSE;
+    } else {
+      HEARTBEAT_ON();
+      blightIsOn = TRUE;
+    }
+    u32CounterMiliseconds = 0;
+  }
+
+  u32CounterMiliseconds++;
 } /* end UserApp1SM_Idle() */
     
 

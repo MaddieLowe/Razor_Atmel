@@ -122,7 +122,43 @@ State Machine Function Definitions
 /* Wait for ??? */
 static void UserApp2SM_Idle(void)
 {
+    static u32 u32onDelay = 10;
+    static u32 u32offDelay = 10;
+    static u32 u32BlinkCounter = 0;
+    static u32 u32ChangeCounter = 0;
+    static bool blightOn = FALSE;
+    static bool increasing = TRUE;
+ 
+    if (blightOn && u32BlinkCounter >= u32onDelay) {
+      HEARTBEAT_OFF();
+      blightOn = FALSE;
+      u32BlinkCounter = 0;
+    } else if (!blightOn && u32BlinkCounter >= u32offDelay) {
+      HEARTBEAT_ON();
+      blightOn = TRUE;
+      u32BlinkCounter = 0;
+    }
     
+    if (u32ChangeCounter == 100) {
+      if (u32onDelay == 0) {
+        increasing = TRUE;
+      }
+      if (u32offDelay == 0) {
+        increasing = FALSE;
+      }
+
+      if (increasing) {
+        u32onDelay = u32onDelay + 1;
+        u32offDelay = u32offDelay - 1;
+      } else {
+        u32onDelay = u32onDelay - 1;
+        u32offDelay = u32offDelay + 1;
+      }
+      u32ChangeCounter = 0;
+    }
+ 
+    u32ChangeCounter++;
+    u32BlinkCounter++;
 } /* end UserApp2SM_Idle() */
      
 #if 0
